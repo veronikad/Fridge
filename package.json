@@ -3,14 +3,34 @@
   "version": "0.0.1",
   "dependencies": {
     "express": "3.1.x",
-    "pg-promise": "2.2.x",
+    "pg-promise": "3.3.x",
     "underscore": "1.4.x",
     "q": "0.9.x",
+    "jade": "1.0.x",
     "grunt": "~0.4.2",
     "grunt-contrib-watch": "~0.5.3"
   },
   "engines": {
     "node": "0.10.x",
     "npm": "1.3.x"
-  }
+  },
+  "description": "An app that helps keeping track of the items in the storage room to avoid the food waste.",
+  "main": "app.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "start": "node app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/veronikad/Fridge.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/veronikad/Fridge/issues"
+  },
+  "homepage": "https://github.com/veronikad/Fridge#readme"
 }

@@ -1,0 +1,23 @@
+doctype html
+html(lang="en")
+	head
+		title= title
+		link(rel="stylesheet", href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css")
+	body
+		nav.navbar
+			div.container-fluid
+				div.navbar-header
+					a.navbar-brand(href="#") Fridge
+				#navbar.collapse.navbar-collapse
+					ul.nav navbar-nav
+						li
+							a(href="#") Add
+					form.navbar-form.navbar-right
+						input(type="text", placeholder="Search").form-control
+		div.container-fluid
+			div.starter-template
+				block content
+		//- Bootstrap core JavaScript
+		//- Placed at the end of the document so the pages load faster
+		script(src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js")
+		script(src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js")

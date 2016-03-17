@@ -24,7 +24,7 @@ _.extend(exports, {
     {
       var item = req.body;
 
-      return db.createItem(item.code, item.name, item.brand, item.bestBefore)
-          .then();
+      return db.createItem(item.code, item.name, item.brand, item.bestBeforeDate)
+          .then(res.redirect("index")); //todo: change for iOS
     }
 });

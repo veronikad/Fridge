@@ -25,6 +25,7 @@ _.extend(exports, {
     db.oneOrNone('select itemId, name, brand from item where ' + code ? 'code=$1' : 'name=$2 and brand=$3', code, name, brand)
       .then(data)
       {
+        console.log(error, data);
         //item is known - update captions, insert to inventory
         if (data)
         {
@@ -53,7 +54,7 @@ _.extend(exports, {
               return t.none('insert into inventory (itemId, bestBefore) values($1, $2)', [item.itemId, bestBefore])
             }
         }
-      }
+      };
   },
 
   getItem: function (code)

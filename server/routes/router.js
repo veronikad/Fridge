@@ -1,6 +1,7 @@
 var Q = require("q"),
     //authentication = require("./authentication"),
-    items = require("./models/inventory");
+    inventory = require(__base + "server/models/inventory");
+    index = require(__base + "server/models/index");
 
 var routes = {
     web: {
@@ -17,6 +18,10 @@ var routes = {
             { path: "/categories/:category_id", method: inventory.getCategory, verb: "GET" },
             { path: "/categories/:category_id", method: inventory.deleteCategory, verb: "DELETE" },
             { path: "/categories/:category_id/items", method: inventory.getItemsForCategory, verb: "GET" },
+        ],
+        pages: [
+            { path: "/", method: index.render },
+            { path: "/item", method: index.item }
         ]
     }
 };
@@ -34,16 +39,34 @@ exports.init = function(app, session) {
     {
       var authFilter = function(req, res, next)
       {
-        if (req.session.userId)
-          return next();
-        else
-          res.send(403);
+        return next();
+        // if (req.session.userId)
+        //   return next();
+        // else
+        //   res.send(403);
       };
       var errorFilter = function(req, res, err)
       {
         res.send(500, err.toString());
       };
       register(route, authFilter, errorFilter);
+    });
+
+    routes["web"]["pages"].forEach(function(route)
+    {
+        var authFilter = function(req, res, next)
+        {
+            return next();
+            // if (req.session.userId)
+            //   return next();
+            // else
+            //   res.send(403);
+        };
+        var errorFilter = function(req, res, err)
+        {
+            res.send(500, err.toString());
+        };
+        register(route, authFilter, errorFilter);
     });
 
     function register(route, authFilter, errorFilter) {

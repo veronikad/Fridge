@@ -1,0 +1,22 @@
+extends layout 
+
+block content
+	h1.page-header Add New Item
+	p.lead Use this document
+	form#formAddItem(name="additem",method="post",action="/items")
+		div.form-group
+			label(for="name").control-label Name
+			input#name(type="text", name="name").form-control
+		div.form-group
+			label(for="brand").control-label Brand
+			input#brand(type="text", name="brand").form-control
+		div.form-group
+			label(for="bestBeforeDate").control-label Best Before
+			input#bestBeforeDate(type="date", name="bestBeforeDate").form-control
+		div.form-group
+			label(for="category").control-label Category
+			input#category(type="text", name="category").form-control
+		div.form-group
+			label(for="code").control-label Code
+			input#code(type="text", name="code").form-control
+		button(type="submit").btn.btn-default Add Item

@@ -1,0 +1,23 @@
+extends layout
+
+block content
+	h1= title
+	p Welcome to #{title}
+	div.table-responsive
+		table.table.table-striped
+			thead
+				tr
+					th Name
+					th Brand
+					th Best Before
+					th Category
+					th Code
+			tbody
+				each item, i in items
+					tr
+						td= item.name
+						td= item.brand
+						td= item.bestBefore
+						td= item.category
+						td= item.code
+
