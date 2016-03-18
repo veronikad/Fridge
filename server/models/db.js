@@ -1,37 +1,37 @@
 var _ = require('underscore'),
-    Q = require('Q');
+    promise = require("promise");
+
 var options = {
-  promiseLib: Q
+  promiseLib: promise
 };
 var pg = require('pg-promise')(options);
 
-var conString = process.env.DATABASE_URL || 'postgres://localhost:5432/fridge';
+var conString = process.env.DATABASE_URL || 'postgres://postgres:postgres@localhost:5432/Fridge';
 
 //var client = new pg.Client(conString);
 //client.connect();
-//var query = client.query('CREATE TABLE item (itemId      SERIAL PRIMARY KEY, code      	varchar(80), name      	varchar(100) NOT NULL,  brand	varchar(100), UNIQUE (code, name, brand));');
+//var query = client.query('CREATE TABLE product (productId      SERIAL PRIMARY KEY, code      	varchar(80), name      	varchar(100) NOT NULL,  brand	varchar(100), UNIQUE (code, name, brand));');
 //query.on('end', function() { client.end(); });
 
 var db = pg(conString);
 
 _.extend(exports, {
-  getItems:function()
+  getProducts:function()
   {
-    return db.manyOrNone('select code, name, brand, bestBefore from inventory inner join item on inventory.itemId = item.itemId order by bestBefore desc');
+      return db.manyOrNone('select code, name, brand, bestBefore from inventory inner join product on inventory.productId = product.productId order by bestBefore desc');
   },
 
-  createItem: function (code, name, brand, bestBefore)
+  createProduct: function (code, name, brand, bestBefore)
   {
-    db.oneOrNone('select itemId, name, brand from item where ' + code ? 'code=$1' : 'name=$2 and brand=$3', code, name, brand)
-      .then(data)
+      return db.oneOrNone('select productId, name, brand from product where ' + (code ? 'code=$1' : 'name=$2 and brand=$3'), code, name, brand)
+      .then(function(data)
       {
-        console.log(error, data);
-        //item is known - update captions, insert to inventory
+        //product is known - update captions, insert to inventory
         if (data)
         {
           if (data.name == name && data.brand == brand)
           {
-            return t.none('insert into inventory (itemId, bestBefore) values($1, $2)', [data.itemId, bestBefore])
+            return db.none('insert into inventory (productId, bestBefore) values($1, $2)', [data.productId, bestBefore])
           }
           else
           {
@@ -39,30 +39,30 @@ _.extend(exports, {
             return db.tx(function(t)
             {
               return t.batch([
-                t.none('update item set name=$2, brand=$3 where code=$1', [code, name, brand]),
-                t.none('insert into inventory (itemId, bestBefore) values($1, $2)', [data.itemId, bestBefore])
+                t.none('update product set name=$2, brand=$3 where code=$1', [code, name, brand]),
+                t.none('insert into inventory (productId, bestBefore) values($1, $2)', [data.productId, bestBefore])
               ]);
             })
           }
         }
         else
         {
-          //item is unknown - insert into item + inventory
-          db.one('insert into item (code, name, brand) values($1, $2, $3) returning itemId', [code, name, brand])
-            .then(item)
+          //product is unknown - insert into product + inventory
+          return db.one('insert into product (code, name, brand) values($1, $2, $3) returning productId', [code, name, brand])
+            .then(function(product)
             {
-              return t.none('insert into inventory (itemId, bestBefore) values($1, $2)', [item.itemId, bestBefore])
-            }
+              return db.none('insert into inventory (productId, bestBefore) values($1, $2)', [product.productid, bestBefore])
+            })
         }
-      };
+      });
   },
 
-  getItem: function (code)
+  getProduct: function (code)
   {
-    return db.oneOrNone('select * from item where code=$1', code);
+    return db.oneOrNone('select * from product where code=$1', code);
   },
 
-  deleteItem: function (id)
+  deleteProduct: function (id)
   {
     return db.none('delete from inventory where inventoryId=$1', id);
   },
@@ -87,21 +87,21 @@ _.extend(exports, {
     return db.none('delete from category where categoryId=$1', id);
   },
 
-  getItemsForCategory: function (id)
+  getProductsForCategory: function (id)
   {
-    return db.manyOrNone('select code, name, brand from item inner join itemCategory on (item.itemId = itemCategory.itemId) and itemCategory.categoryId = $1', id);
+    return db.manyOrNone('select code, name, brand from product inner join productCategory on (product.productId = productCategory.productId) and productCategory.categoryId = $1', id);
   },
 });
 
 // $ createdb Fridge;
-// CREATE TABLE item (
-    // itemId      SERIAL PRIMARY KEY,
+// CREATE TABLE product (
+    // productId      SERIAL PRIMARY KEY,
     // code      	varchar(80),
     // name      	varchar(100) NOT NULL,
     // brand	varchar(100),
     // UNIQUE (code, name, brand)
 // );
-// CREATE INDEX ON item (code);
+// CREATE INDEX ON product (code);
 
 // CREATE TABLE category (
     // categoryId  SERIAL PRIMARY KEY,
@@ -109,13 +109,13 @@ _.extend(exports, {
     // UNIQUE (name)
 // );
 
-// CREATE TABLE itemCategory(
-    // itemId       integer REFERENCES item(itemId),
+// CREATE TABLE productCategory(
+    // productId       integer REFERENCES product(productId),
     // categoryId integer REFERENCES category(categoryId) 
 // );
 
 // CREATE TABLE inventory(
     // inventoryId SERIAL PRIMARY KEY,
-    // itemId      	integer REFERENCES item(itemId),
+    // productId      	integer REFERENCES product(productId),
     // bestBefore 	date NOT NULL
 // );

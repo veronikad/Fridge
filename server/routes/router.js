@@ -1,4 +1,4 @@
-var Q = require("q"),
+var Promise = require("promise"),
     //authentication = require("./authentication"),
     inventory = require(__base + "server/models/inventory");
     index = require(__base + "server/models/index");
@@ -9,19 +9,19 @@ var routes = {
             //{ path: "/authenticate/init", method: authentication.web.authenticate, anonymous: true },
             //{ path: "/authenticate/info", method: authentication.web.info, anonymous: true },
             //{ path: "/logout", method: authentication.web.logout },
-            { path: "/items", method: inventory.getItems, verb: "GET" },
-            { path: "/items", method: inventory.createItem, verb: "POST" },
-            { path: "/items/code/:code", method: inventory.getItem, verb: "GET" },
-            { path: "/items/:item_id", method: inventory.deleteItem, verb: "DELETE" },
+            { path: "/products", method: inventory.getProducts, verb: "GET" },
+            { path: "/products", method: inventory.createProduct, verb: "POST" },
+            { path: "/products/code/:code", method: inventory.getProduct, verb: "GET" },
+            { path: "/products/:product_id", method: inventory.deleteProduct, verb: "DELETE" },
             { path: "/categories", method: inventory.getCategories, verb: "GET" },
             { path: "/categories", method: inventory.createCategory, verb: "POST" },
             { path: "/categories/:category_id", method: inventory.getCategory, verb: "GET" },
             { path: "/categories/:category_id", method: inventory.deleteCategory, verb: "DELETE" },
-            { path: "/categories/:category_id/items", method: inventory.getItemsForCategory, verb: "GET" },
+            { path: "/categories/:category_id/products", method: inventory.getProductsForCategory, verb: "GET" },
         ],
         pages: [
             { path: "/", method: index.render },
-            { path: "/item", method: index.item }
+            { path: "/product", method: index.product }
         ]
     }
 };
@@ -72,15 +72,22 @@ exports.init = function(app, session) {
     function register(route, authFilter, errorFilter) {
         var verb = (route.verb || "GET").toLowerCase();
         var args = [route.path];
-        if (!route.anonymous)
-            args.push(authFilter);
+        //if (!route.anonymous)
+        //    args.push(authFilter);
 
         args.push(function (req, res, next) {
-            Q.try(function () { return route.method(req, res); })
-                .catch(function (err) {
-                    console.log(route.path + ": " + err.toString());
-                    errorFilter(req, res, err);
-                });
+
+            try {
+                var promise = route.method(req, res);
+                if (promise)
+                    promise.catch(function (err) {
+                        console.log(route.path + ": " + err.toString());
+                        errorFilter(req, res, err);
+                    });
+            }
+            catch (err) {
+                errorFilter(req, res, err);
+            }
         });
 
         app[verb].apply(app, args);

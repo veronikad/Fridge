@@ -4,11 +4,12 @@ var _ = require("underscore"),
 _.extend(exports, {
     render: function (req, res)
     {
-    	var items = db.getItems();
-      	res.render("index", { title: "Express", items: items});
+    	return db.getProducts().then(function(items){
+      	    res.render("index", { title: "Items", items: items});
+        });
     },
-    item: function(req, res)
+    product: function(req, res)
     {
-    	res.render("item", {});
+    	res.render("product", {});
     }
 });

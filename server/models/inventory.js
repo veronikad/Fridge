@@ -2,29 +2,30 @@ var _ = require("underscore"),
    db = require("./db");
 
 _.extend(exports, {
-    getItems: function (req, res)
+    getProducts: function (req, res)
     {
-      return db.getItems()
-          .then(function(items) {
-              res.send(items.map(_taskToClient));
+      return db.getProducts()
+          .then(function(products) {
+              res.send(products.map(_taskToClient)); //todo: define mapping
           });
     },
 
-    getItem: function (req, res)
+    getProduct: function (req, res)
     {
       var id = req.params.code;
-      return db.getItem(code)
-          .then(function (item)
+      return db.getProduct(code)
+          .then(function (product)
           {
-            res.send(item.map(_taskToClient));
+            res.send(product.map(_taskToClient));
           });
     },
     
-    createItem: function (req, res)
+    createProduct: function (req, res)
     {
-      var item = req.body;
+      var product = req.body;
 
-      return db.createItem(item.code, item.name, item.brand, item.bestBeforeDate)
-          .then(res.redirect("index")); //todo: change for iOS
+      return db.createProduct(product.code, product.name, product.brand, product.bestBeforeDate)
+          .then(function(data){
+              console.log("created product"); res.redirect("/");});
     }
 });

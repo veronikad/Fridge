@@ -3,7 +3,7 @@ extends layout
 block content
 	h1.page-header Add New Item
 	p.lead Use this document
-	form#formAddItem(name="additem",method="post",action="/items")
+	form#formAddItem(name="createProduct",method="post",action="/products")
 		div.form-group
 			label(for="name").control-label Name
 			input#name(type="text", name="name").form-control
