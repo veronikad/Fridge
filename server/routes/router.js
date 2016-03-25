@@ -1,7 +1,7 @@
 var Promise = require("promise"),
     //authentication = require("./authentication"),
     inventory = require(__base + "server/models/inventory");
-    index = require(__base + "server/models/index");
+    index = require(__base + "server/routes/index");
 
 var routes = {
     web: {
@@ -12,6 +12,7 @@ var routes = {
             { path: "/products", method: inventory.getProducts, verb: "GET" },
             { path: "/products", method: inventory.createProduct, verb: "POST" },
             { path: "/products/code/:code", method: inventory.getProduct, verb: "GET" },
+            { path: "/products/:product_id", method: inventory.getProductById, verb: "GET" },
             { path: "/products/:product_id", method: inventory.deleteProduct, verb: "DELETE" },
             { path: "/categories", method: inventory.getCategories, verb: "GET" },
             { path: "/categories", method: inventory.createCategory, verb: "POST" },

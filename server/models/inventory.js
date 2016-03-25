@@ -1,5 +1,5 @@
 var _ = require("underscore"),
-   db = require("./db");
+   db = require("./../db");
 
 _.extend(exports, {
     getProducts: function (req, res)
@@ -16,16 +16,33 @@ _.extend(exports, {
       return db.getProduct(code)
           .then(function (product)
           {
-            res.send(product.map(_taskToClient));
+            res.send(product.toJSON());
           });
     },
-    
+
+    getProductById: function(req, res)
+    {
+        var productId = req.params.productId;
+        return db.getProduct(productId)
+            .then(function(product){
+                res.send(product.toJSON());
+            });
+    },
+
     createProduct: function (req, res)
     {
       var product = req.body;
 
       return db.createProduct(product.code, product.name, product.brand, product.bestBeforeDate)
           .then(function(data){
-              console.log("created product"); res.redirect("/");});
+              console.log("created product");
+          });
+    },
+
+    removeProduct: function (req, res)
+    {
+        var id = req.param.productId;
+
+        return db.deleteProduct(id);
     }
 });

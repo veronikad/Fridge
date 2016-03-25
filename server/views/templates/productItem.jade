@@ -1,0 +1,9 @@
+tr
+	td
+		button(type="button", aria-label="Delete").btn.btn-default.delete-product-item
+			span.glyphicon.glyphicon-remove(aria-hidden="true")
+	td= product.name
+	td= product.brand
+	td= moment(product.bestbefore).format("LL")
+	td= product.category
+	td= product.code

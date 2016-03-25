@@ -5,8 +5,9 @@ var express = require("express"),
     jade = require("jade");
 
 var app = express();
+app.locals.moment = require('moment');
 
- app.configure(function () {
+app.configure(function () {
 	app.set("view engine", "jade");
     app.set("views", __dirname + "/server/views");
     //app.engine("html", jade.__express);
